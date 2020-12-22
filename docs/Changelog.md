@@ -18,6 +18,8 @@ Nussknacker versions
 * [#1361](https://github.com/TouK/nussknacker/pull/1361) Lazy vars removal
 * [#1363](https://github.com/TouK/nussknacker/pull/1363) Open/close only services that are actually used in process
 * [#1367](https://github.com/TouK/nussknacker/pull/1367) Custom actions - first, experimental version
+* [#1357](https://github.com/TouK/nussknacker/pull/1357) Add run mode when invoking ProcessConfigCreator to be able to
+  determine if we are inside e.g. test process run.
 
 0.3.1 (not released yet) 
 ------------------------

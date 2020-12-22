@@ -3,6 +3,7 @@ package pl.touk.nussknacker.engine.util.service.query
 import java.util.UUID
 
 import pl.touk.nussknacker.engine.ModelData
+import pl.touk.nussknacker.engine.api.process.RunMode
 import pl.touk.nussknacker.engine.api.test.InvocationCollectors.{NodeContext, QueryServiceInvocationCollector, QueryServiceResult}
 import pl.touk.nussknacker.engine.api.test.TestRunId
 import pl.touk.nussknacker.engine.api.{process, _}
@@ -22,7 +23,7 @@ class ServiceQuery(modelData: ModelData) {
 
     //this map has to be created for each invocation, because we close service after invocation (to avoid connection leaks etc.)
     val serviceMethodMap: Map[String, ObjectWithMethodDef] = modelData.withThisAsContextClassLoader {
-      val servicesMap = modelData.configCreator.services(process.ProcessObjectDependencies(modelData.processConfig, modelData.objectNaming))
+      val servicesMap = modelData.configCreator.services(process.ProcessObjectDependencies(modelData.processConfig, modelData.objectNaming, RunMode.ServiceQuery))
       ObjectWithMethodDef.forMap(servicesMap, ProcessObjectDefinitionExtractor.service,
         ProcessDefinitionExtractor.extractNodesConfig(modelData.processConfig))
     }

@@ -4,6 +4,7 @@ import com.typesafe.config.ConfigFactory
 import com.typesafe.config.ConfigValueFactory.fromAnyRef
 import org.scalatest.{Matchers, Suite}
 import pl.touk.nussknacker.engine.api.conversion.ProcessConfigCreatorMapping
+import pl.touk.nussknacker.engine.api.process.RunMode
 import pl.touk.nussknacker.engine.flink.test.FlinkSpec
 import pl.touk.nussknacker.engine.{javademo, process}
 import pl.touk.nussknacker.engine.kafka.{KafkaSpec, KafkaZookeeperServer}
@@ -31,7 +32,7 @@ trait BaseITest extends FlinkSpec with KafkaSpec { self: Suite with Matchers =>
     super.beforeAll()
     val config = TestConfig(kafkaZookeeperServer)
     val modelData = LocalModelData(config, creator)
-    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData), config, ExecutionConfigPreparer.unOptimizedChain(modelData))
+    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData, RunMode.Engine), config, ExecutionConfigPreparer.unOptimizedChain(modelData))
   }
 
 }

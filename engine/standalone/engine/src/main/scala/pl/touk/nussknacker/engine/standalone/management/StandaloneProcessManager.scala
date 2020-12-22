@@ -10,7 +10,7 @@ import pl.touk.nussknacker.engine.ModelData.ClasspathConfig
 import pl.touk.nussknacker.engine.api.deployment.TestProcess.{TestData, TestResults}
 import pl.touk.nussknacker.engine.api.deployment._
 import pl.touk.nussknacker.engine.api.deployment.simple.SimpleProcessStateDefinitionManager
-import pl.touk.nussknacker.engine.api.process.{ProcessName, ProcessObjectDependencies, TestDataParserProvider}
+import pl.touk.nussknacker.engine.api.process.{ProcessName, ProcessObjectDependencies, RunMode, TestDataParserProvider}
 import pl.touk.nussknacker.engine.api.queryablestate.QueryableClient
 import pl.touk.nussknacker.engine.api.test.InvocationCollectors.{ServiceInvocationCollector, SinkInvocationCollector}
 import pl.touk.nussknacker.engine.api.test.{ResultsCollectingListener, ResultsCollectingListenerHolder, TestRunId}
@@ -116,7 +116,7 @@ class StandaloneTestMain(testData: TestData, process: EspProcess, modelData: Mod
 
   def runTest[T](variableEncoder: Any => T): TestResults[T] = {
     val creator = modelData.configCreator
-    val processObjectDependencies = ProcessObjectDependencies(modelData.processConfig, modelData.objectNaming)
+    val processObjectDependencies = ProcessObjectDependencies(modelData.processConfig, modelData.objectNaming, RunMode.Test)
 
     val definitions = ProcessDefinitionExtractor.extractObjectWithMethods(creator, processObjectDependencies)
 

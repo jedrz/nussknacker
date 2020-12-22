@@ -11,7 +11,7 @@ import org.apache.flink.streaming.api.scala._
 import org.scalatest.{FunSuite, Matchers}
 import pl.touk.nussknacker.engine.api._
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
-import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode, SinkFactory, SourceFactory, WithCategories}
 import pl.touk.nussknacker.engine.api.test.{ResultsCollectingListener, ResultsCollectingListenerHolder}
 import pl.touk.nussknacker.engine.build.GraphBuilder
 import pl.touk.nussknacker.engine.flink.api.process.FlinkSourceFactory.NoParamSourceFactory
@@ -103,7 +103,7 @@ class UnionWithMemoTransformerSpec extends FunSuite with FlinkSpec with Matchers
                           collectingListener: ResultsCollectingListener)(action: => Unit): Unit = {
     val model = LocalModelData(ConfigFactory.empty(), new UnionWithMemoTransformerSpec.Creator(sourceFoo, sourceBar, collectingListener))
     val stoppableEnv = flinkMiniCluster.createExecutionEnvironment()
-    val registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(model), model.processConfig, ExecutionConfigPreparer.unOptimizedChain(model))
+    val registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(model, RunMode.Engine), model.processConfig, ExecutionConfigPreparer.unOptimizedChain(model))
     registrar.register(new StreamExecutionEnvironment(stoppableEnv), testProcess, ProcessVersion.empty, Some(collectingListener.runId))
     stoppableEnv.withJobRunning(testProcess.id)(action)
   }

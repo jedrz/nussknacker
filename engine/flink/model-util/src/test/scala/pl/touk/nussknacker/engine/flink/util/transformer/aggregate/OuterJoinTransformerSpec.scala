@@ -13,7 +13,7 @@ import org.scalatest.{FunSuite, Matchers}
 import pl.touk.nussknacker.engine.api._
 import pl.touk.nussknacker.engine.api.context.ProcessCompilationError
 import pl.touk.nussknacker.engine.api.exception.ExceptionHandlerFactory
-import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, SinkFactory, SourceFactory, WithCategories}
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode, SinkFactory, SourceFactory, WithCategories}
 import pl.touk.nussknacker.engine.api.test.{ResultsCollectingListener, ResultsCollectingListenerHolder}
 import pl.touk.nussknacker.engine.api.typed.typing.TypingResult
 import pl.touk.nussknacker.engine.build.GraphBuilder
@@ -109,7 +109,7 @@ class OuterJoinTransformerSpec extends FunSuite with FlinkSpec with Matchers wit
   private def runProcess(testProcess: EspProcess, input1: BlockingQueueSource[OneRecord], input2: List[OneRecord], collectingListener: ResultsCollectingListener) = {
     val model = modelData(input1, input2, collectingListener)
     val stoppableEnv = flinkMiniCluster.createExecutionEnvironment()
-    val registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(model), model.processConfig, ExecutionConfigPreparer.unOptimizedChain(model))
+    val registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(model, RunMode.Engine), model.processConfig, ExecutionConfigPreparer.unOptimizedChain(model))
     registrar.register(new StreamExecutionEnvironment(stoppableEnv), testProcess, ProcessVersion.empty, Some(collectingListener.runId))
     val id = stoppableEnv.executeAndWaitForStart(testProcess.id)
     (id, stoppableEnv)

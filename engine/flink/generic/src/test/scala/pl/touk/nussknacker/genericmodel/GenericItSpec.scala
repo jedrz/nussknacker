@@ -11,7 +11,7 @@ import org.apache.avro.Schema
 import org.apache.avro.generic.GenericData
 import org.apache.flink.api.common.ExecutionConfig
 import org.scalatest.{EitherValues, FunSuite, Matchers}
-import pl.touk.nussknacker.engine.api.process.ProcessObjectDependencies
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode}
 import pl.touk.nussknacker.engine.api.{MetaData, ProcessVersion, StreamMetaData}
 import pl.touk.nussknacker.engine.avro.encode.{BestEffortAvroEncoder, ValidationMode}
 import pl.touk.nussknacker.engine.avro.kryo.AvroSerializersRegistrar
@@ -47,7 +47,7 @@ class GenericItSpec extends FunSuite with FlinkSpec with Matchers with KafkaSpec
     // we turn off auto registration to do it on our own passing mocked schema registry client
     .withValue(s"kafka.kafkaEspProperties.${AvroSerializersRegistrar.autoRegisterRecordSchemaIdSerializationProperty}", fromAnyRef(false))
 
-  lazy val mockProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader))
+  lazy val mockProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader), RunMode.Engine)
 
   lazy val kafkaConfig: KafkaConfig = KafkaConfig.parseConfig(config)
 
@@ -330,7 +330,7 @@ class GenericItSpec extends FunSuite with FlinkSpec with Matchers with KafkaSpec
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     val modelData = LocalModelData(config, creator)
-    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData), config, executionConfigPreparerChain(modelData))
+    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData, RunMode.Engine), config, executionConfigPreparerChain(modelData))
   }
 
   private def executionConfigPreparerChain(modelData: LocalModelData) = {

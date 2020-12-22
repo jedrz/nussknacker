@@ -64,7 +64,7 @@ trait KafkaAvroSpecMixin extends FunSuite with FlinkSpec with KafkaSpec with Mat
 
   protected var registrar: FlinkProcessRegistrar = _
 
-  protected lazy val testProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader))
+  protected lazy val testProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader), RunMode.Engine)
 
   protected def executionConfigPreparerChain(modelData: LocalModelData): ExecutionConfigPreparer =
     ExecutionConfigPreparer.chain(

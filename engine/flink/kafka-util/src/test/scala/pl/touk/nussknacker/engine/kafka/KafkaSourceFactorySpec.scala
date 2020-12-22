@@ -6,7 +6,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.api.java.typeutils.GenericTypeInfo
 import org.scalatest.{FlatSpec, Matchers}
 import pl.touk.nussknacker.engine.api.context.ProcessCompilationError.NodeId
-import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, Source, TestDataGenerator}
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode, Source, TestDataGenerator}
 import pl.touk.nussknacker.engine.api.test.TestParsingUtils
 import pl.touk.nussknacker.engine.api.{MetaData, StreamMetaData}
 import pl.touk.nussknacker.engine.kafka.source.{KafkaSource, KafkaSourceFactory}
@@ -49,7 +49,7 @@ class KafkaSourceFactorySpec extends FlatSpec with KafkaSpec with Matchers {
 
   private def createSource(topic: String): KafkaSource[String] = {
     val sourceFactory = new KafkaSourceFactory[String](new SimpleStringSchema, None,
-      TestParsingUtils.newLineSplit, ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader)))
+      TestParsingUtils.newLineSplit, ProcessObjectDependencies(config, ObjectNamingProvider(getClass.getClassLoader), RunMode.Engine))
     sourceFactory.create(MetaData("", StreamMetaData()), topic)(NodeId(""))
   }
 

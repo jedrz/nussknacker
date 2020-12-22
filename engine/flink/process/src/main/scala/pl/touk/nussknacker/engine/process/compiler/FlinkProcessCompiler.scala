@@ -7,7 +7,7 @@ import pl.touk.nussknacker.engine.api.async.{DefaultAsyncInterpretationValue, De
 import pl.touk.nussknacker.engine.api.context.ProcessCompilationError
 import pl.touk.nussknacker.engine.api.exception.EspExceptionInfo
 import pl.touk.nussknacker.engine.api.namespaces.ObjectNaming
-import pl.touk.nussknacker.engine.api.process.{ProcessConfigCreator, ProcessObjectDependencies}
+import pl.touk.nussknacker.engine.api.process.{ProcessConfigCreator, ProcessObjectDependencies, RunMode}
 import pl.touk.nussknacker.engine.api.{JobData, ProcessListener, ProcessVersion}
 import pl.touk.nussknacker.engine.compile._
 import pl.touk.nussknacker.engine.definition.DefinitionExtractor.ObjectWithMethodDef
@@ -29,17 +29,18 @@ import scala.concurrent.duration.FiniteDuration
 class FlinkProcessCompiler(creator: ProcessConfigCreator,
                            configToLoad: ModelConfigToLoad,
                            val diskStateBackendSupport: Boolean,
-                           objectNaming: ObjectNaming) extends Serializable {
+                           objectNaming: ObjectNaming,
+                           runMode: RunMode) extends Serializable {
 
   import net.ceedubs.ficus.Ficus._
   import net.ceedubs.ficus.readers.ArbitraryTypeReader._
   import pl.touk.nussknacker.engine.util.Implicits._
 
-  def this(modelData: ModelData) = this(modelData.configCreator, modelData.processConfigFromConfiguration, true, modelData.objectNaming)
+  def this(modelData: ModelData, runMode: RunMode) = this(modelData.configCreator, modelData.processConfigFromConfiguration, true, modelData.objectNaming, runMode)
 
   def compileProcess(process: EspProcess, processVersion: ProcessVersion)(userCodeClassLoader: ClassLoader): CompiledProcessWithDeps = {
     val config = loadConfig(userCodeClassLoader)
-    val processObjectDependencies = ProcessObjectDependencies(config, objectNaming)
+    val processObjectDependencies = ProcessObjectDependencies(config, objectNaming, runMode)
 
     //TODO: this should be somewhere else?
     val timeout = config.as[FiniteDuration]("timeout")

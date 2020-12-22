@@ -9,7 +9,7 @@ import org.apache.kafka.common.record.TimestampType
 import org.scalatest.BeforeAndAfter
 import pl.touk.nussknacker.engine.api.ProcessVersion
 import pl.touk.nussknacker.engine.api.exception.NonTransientException
-import pl.touk.nussknacker.engine.api.process.ProcessObjectDependencies
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode}
 import pl.touk.nussknacker.engine.avro.KafkaAvroBaseTransformer._
 import pl.touk.nussknacker.engine.avro.KafkaAvroTestProcessConfigCreator.recordingExceptionHandler
 import pl.touk.nussknacker.engine.avro.encode.ValidationMode
@@ -44,7 +44,7 @@ class KafkaAvroIntegrationSpec extends KafkaAvroSpecMixin with BeforeAndAfter {
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     val modelData = LocalModelData(config, creator)
-    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData), config, executionConfigPreparerChain(modelData))
+    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData, RunMode.Engine), config, executionConfigPreparerChain(modelData))
   }
 
   after {

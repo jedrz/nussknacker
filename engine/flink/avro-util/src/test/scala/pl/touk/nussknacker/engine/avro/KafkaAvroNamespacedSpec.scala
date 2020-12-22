@@ -6,7 +6,7 @@ import org.apache.avro.Schema
 import org.scalatest.OptionValues
 import pl.touk.nussknacker.engine.api.definition.{FixedExpressionValue, FixedValuesParameterEditor}
 import pl.touk.nussknacker.engine.api.namespaces.{KafkaUsageKey, NamingContext, ObjectNaming, ObjectNamingParameters}
-import pl.touk.nussknacker.engine.api.process.ProcessObjectDependencies
+import pl.touk.nussknacker.engine.api.process.{ProcessObjectDependencies, RunMode}
 import pl.touk.nussknacker.engine.avro.schema.PaymentV1
 import pl.touk.nussknacker.engine.avro.schemaregistry.confluent.ConfluentSchemaRegistryProvider
 import pl.touk.nussknacker.engine.avro.schemaregistry.confluent.client.{ConfluentSchemaRegistryClientFactory, MockConfluentSchemaRegistryClientBuilder, MockConfluentSchemaRegistryClientFactory, MockSchemaRegistryClient}
@@ -26,7 +26,7 @@ class NamespacedKafkaSourceSinkTest extends KafkaAvroSpecMixin with OptionValues
       .withValue("namespace", fromAnyRef(namespace))
   }
 
-  override protected lazy val testProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, objectNaming)
+  override protected lazy val testProcessObjectDependencies: ProcessObjectDependencies = ProcessObjectDependencies(config, objectNaming, RunMode.Engine)
 
   override def schemaRegistryClient: MockSchemaRegistryClient = schemaRegistryMockClient
 
@@ -41,7 +41,7 @@ class NamespacedKafkaSourceSinkTest extends KafkaAvroSpecMixin with OptionValues
   override protected def beforeAll(): Unit = {
     super.beforeAll()
     val modelData = LocalModelData(config, creator, objectNaming = objectNaming)
-    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData), config, executionConfigPreparerChain(modelData))
+    registrar = FlinkProcessRegistrar(new FlinkProcessCompiler(modelData, RunMode.Engine), config, executionConfigPreparerChain(modelData))
   }
 
   test("should create source with proper filtered and converted topics") {
